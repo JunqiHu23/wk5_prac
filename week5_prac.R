@@ -134,3 +134,12 @@ legend <- tm_shape(Hotels) +
 t=tmap_arrange(tm1, tm2, tm3, legend, ncol=2)
 
 t
+
+###use grid
+library(grid)
+grid.newpage()
+pushViewport(viewport(layout=grid.layout(2,2)))
+print(tm1, vp=viewport(layout.pos.col=1, layout.pos.row=1, height=5))
+print(tm2, vp=viewport(layout.pos.col=2, layout.pos.row=1, height=5))
+print(tm3, vp=viewport(layout.pos.col=1, layout.pos.row=2, height=5))
+print(legend, vp=viewport(layout.pos.col=2, layout.pos.row=2, height=5))
