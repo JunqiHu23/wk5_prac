@@ -6,6 +6,7 @@ library(tmaptools)
 library(tidyverse)
 library(here)
 
+###static map
 #read in all the spatial data and reproject it
 
 OSM <- st_read(here('data',
@@ -143,3 +144,39 @@ print(tm1, vp=viewport(layout.pos.col=1, layout.pos.row=1, height=5))
 print(tm2, vp=viewport(layout.pos.col=2, layout.pos.row=1, height=5))
 print(tm3, vp=viewport(layout.pos.col=1, layout.pos.row=2, height=5))
 print(legend, vp=viewport(layout.pos.col=2, layout.pos.row=2, height=5))
+
+#------------------------------
+
+###inset map
+Londonbb = st_bbox(Airbnb,
+                   crs = st_crs(Airbnb)) %>% 
+  st_as_sfc()
+
+main <- tm_shape(Airbnb, bbbox = Londonbb) + 
+  tm_polygons("Accomodation count",
+              breaks=breaks, 
+              palette="PuBu")+
+  tm_scale_bar(position = c("left", "bottom"), text.size = .75)+
+  tm_layout(legend.position = c("right","top"), 
+            legend.text.size=.75, 
+            legend.title.size = 1.1,
+            frame=FALSE)+
+  tm_credits("(c) OpenStreetMap contrbutors and Air b n b", position=c(0.0,0.0))+
+  #tm_text(text = "NAME", size = .5, along.lines =T, remove.overlap=T,  auto.placement=F)+
+  tm_compass(type = "8star", position = c(0.06, 0.1)) +
+  
+  #bottom left top right
+  tm_layout(inner.margin=c(0.02,0.02,0.02,0.2))
+
+inset = tm_shape(UK_outlinecrop) + tm_polygons() +
+  tm_shape(Londonbb)+ 
+  tm_borders(col = "grey40", lwd = 3)+
+  tm_layout(frame=FALSE,
+            bg.color = "transparent")+
+  tm_shape(WorldCities2) +
+  tm_symbols(col = "red", scale = .5)+
+  tm_text("CITY_NAME", xmod=-1.5, ymod=-0.5)
+
+library(grid)
+main
+print(inset, vp = viewport(0.86, 0.29, width = 0.5, height = 0.55))
