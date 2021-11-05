@@ -277,3 +277,4 @@ map<- leaflet(Joined) %>%
 
 # plot the map
 map
+#
